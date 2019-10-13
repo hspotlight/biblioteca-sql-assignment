@@ -1,0 +1,116 @@
+-- 1. Who checked out the book 'The Hobbit'?
+SELECT member.id, member.name, checkout_item.book_title
+FROM
+(
+    SELECT checkout_item.member_id, book.title book_title
+    FROM checkout_item
+    JOIN book
+    ON (checkout_item.book_id = book.id AND book.title = 'The Hobbit')
+) AS checkout_item
+JOIN member
+ON checkout_item.member_id = member.id;
+
+-- ANSWER:
+-- 1|Anand Beck|The Hobbit
+
+
+-- 2. How many people have not checked out anything?
+SELECT member.id, member.name
+FROM member
+LEFT JOIN checkout_item
+ON (member.id = checkout_item.member_id)
+WHERE checkout_item.member_id IS NULL
+
+-- ANSWER:
+-- 3|Sneha Wang
+-- 4|Judy Li
+-- 5|Anand Huang
+-- 9|Raquel Singh
+-- 10|Mauro Smith
+-- 11|Raquel Listov
+-- 12|Tanuj Fowler
+-- 13|Frank Listov
+-- 14|Alok Jain
+-- 15|Alok Knuth
+-- 16|Frank Beck
+-- 17|Scott Huang
+-- 18|Anand Schneider
+-- 19|Julian Evans
+-- 20|Mauro Singh
+-- 21|Scott Knuth
+-- 22|Faris Wang
+-- 23|Anand Smith
+-- 24|Frank Singh
+-- 25|Alok Gupta
+-- 26|Mauro Knuth
+-- 27|Frank Wang
+-- 28|Nandini Fowler
+-- 29|Mauro Hunt
+-- 30|Scott Jain
+-- 31|Alok Carmack
+-- 32|Billy Knuth
+-- 33|Tanuj Schneider
+-- 34|Faris Huang
+-- 35|Anand Li
+-- 36|Julian Huang
+-- 37|Julian Schneider
+-- 38|Judy Singh
+-- 39|Nandini Carmack
+-- 40|Tanuj Listov
+-- 41|Naval Hunt
+-- 42|Schweta Jain
+
+
+-- 3. What books and movies aren't checked out?
+SELECT 'book' product_type, book.id, book.title
+FROM book
+LEFT JOIN checkout_item
+ON (book.id = checkout_item.book_id)
+WHERE checkout_item.book_id IS NULL
+UNION
+SELECT 'movie' product_type, movie.id, movie.title
+FROM movie
+LEFT JOIN checkout_item
+ON (movie.id = checkout_item.movie_id)
+WHERE checkout_item.movie_id IS NULL
+
+-- ANSWER:
+-- book|2|Fellowship of the Ring
+-- book|6|1984
+-- book|7|Tom Sawyer
+-- book|8|Catcher in the Rye
+-- book|9|To Kill a Mockingbird
+-- book|10|Domain Driven Design
+-- movie|6|Thin Red Line
+-- movie|7|Crouching Tiger, Hidden Dragon
+-- movie|8|Lawrence of Arabia
+-- movie|9|Office Space
+
+
+-- 4. Add the book 'The Pragmatic Programmer', and add yourself as a member. 
+-- Check out'The Prgramatic Programmer'.
+-- Use your query from question 1 to verify that you have check it out.
+-- Also, provide the SQL used to update the database.
+
+INSERT INTO book VALUES (11, 'The Pragmatic Programmer');
+
+INSERT INTO member VALUES (43, 'Pakawat Anekwiroj');
+
+INSERT INTO checkout_item VALUES (43, 11, NULL);
+
+
+-- 5. Who has checkout more than 1 item?
+SELECT member.id, member.name
+FROM
+(
+    SELECT member_id, count(*) checkout_count
+    FROM checkout_item
+    GROUP BY member_id
+) checkout_item
+JOIN member
+ON (checkout_item.member_id = member.id)
+WHERE checkout_item.checkout_count > 1;
+
+-- ANSWER:
+-- 1|Anand Beck
+-- 6|Frank Smith
